@@ -1,0 +1,17 @@
+{
+    "name": "Routine Palette",
+    "short_name": "RoutinePalette",
+    "description": "나만의 색채로 일상을 기록하는 루틴 팔레트",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#0d1117",
+    "theme_color": "#3b82f6",
+    "icons": [
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/3659/3659898.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable any"
+        }
+    ]
+}
