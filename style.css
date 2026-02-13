@@ -117,17 +117,26 @@ body.theme-dark {
     font-weight: 600;
     background: linear-gradient(to right, #3b82f6, #8b5cf6);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .section-title {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     margin-top: 20px;
-    /* 기존 40px에서 축소 */
     margin-bottom: 16px;
-    /* 기존 32px에서 축소 */
+}
+
+.date-display {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--item-bg);
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
 }
 
 #add-routine-btn {
@@ -267,6 +276,38 @@ body.theme-dark {
 .day-cell.today {
     border-color: #3b82f6;
     border-width: 2px;
+}
+
+.day-cell.selected {
+    border-color: #facc15 !important;
+    border-width: 2px;
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+    z-index: 5;
+}
+
+.day-cell.achievement-ring::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899, #facc15);
+    border-radius: 14px;
+    z-index: -1;
+    animation: rotateGradient 3s linear infinite;
+    opacity: 0.9;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+@keyframes rotateGradient {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
 }
 
 .cell-bg {

@@ -8,6 +8,7 @@ let theme = localStorage.getItem('routine-theme') || 'dark';
 let currentDate = new Date();
 let selectedColor = '#3B82F6';
 let editingRoutineId = null;
+let selectedDate = new Date(); // 현재 선택된 날짜 (기본값: 오늘)
 
 // Elements
 const routineList = document.getElementById('routine-list');
@@ -45,15 +46,23 @@ window.setTheme = function (newTheme) {
 // Render Routines
 function renderRoutines() {
     routineList.innerHTML = '';
+    const selectedDateStr = formatDate(selectedDate);
+
+    // 선택된 날짜 표시 업데이트
+    const dateDisplay = document.getElementById('selected-date-display');
+    if (dateDisplay) {
+        dateDisplay.innerText = selectedDateStr.replace(/-/g, '.');
+    }
+
     const todayStr = formatDate(new Date());
 
     routines.forEach(routine => {
-        const isCompletedToday = routine.history.includes(todayStr);
+        const isCompletedOnSelected = routine.history.includes(selectedDateStr);
         const item = document.createElement('div');
         item.className = 'routine-item';
         item.innerHTML = `
-            <div class="routine-checkbox ${isCompletedToday ? 'checked' : ''}" 
-                 style="color: ${routine.color}; border-color: ${routine.color}; background-color: ${isCompletedToday ? routine.color : 'transparent'}"
+            <div class="routine-checkbox ${isCompletedOnSelected ? 'checked' : ''}" 
+                 style="color: ${routine.color}; border-color: ${routine.color}; background-color: ${isCompletedOnSelected ? routine.color : 'transparent'}"
                  onclick="toggleRoutine(${routine.id})">
             </div>
             <div class="routine-info">
@@ -108,9 +117,19 @@ function createDayCell(year, month, day, isOtherMonth) {
     const date = new Date(year, month, day);
     const dateStr = formatDate(date);
     const cell = document.createElement('div');
-    cell.className = `day-cell ${isOtherMonth ? 'other-month' : ''} ${dateStr === formatDate(new Date()) ? 'today' : ''}`;
+    const isToday = dateStr === formatDate(new Date());
+    const isSelected = dateStr === formatDate(selectedDate);
+
+    cell.className = `day-cell ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`;
+    cell.onclick = () => selectDate(date);
 
     const completed = routines.filter(r => r.history.includes(dateStr));
+
+    // 60% 이상 달성 시 테두리 그라데이션 (루틴이 최소 1개 이상 있을 때)
+    if (routines.length > 0 && (completed.length / routines.length) >= 0.6) {
+        cell.classList.add('achievement-ring');
+    }
+
     if (completed.length > 0) {
         const bg = document.createElement('div');
         bg.className = 'cell-bg';
@@ -134,14 +153,20 @@ function createDayCell(year, month, day, isOtherMonth) {
     calendarDays.appendChild(cell);
 }
 
+window.selectDate = function (date) {
+    selectedDate = date;
+    renderRoutines();
+    renderCalendar();
+};
+
 // Routine Actions
 window.toggleRoutine = function (id) {
-    const todayStr = formatDate(new Date());
+    const dateStr = formatDate(selectedDate);
     const routine = routines.find(r => r.id === id);
-    if (routine.history.includes(todayStr)) {
-        routine.history = routine.history.filter(d => d !== todayStr);
+    if (routine.history.includes(dateStr)) {
+        routine.history = routine.history.filter(d => d !== dateStr);
     } else {
-        routine.history.push(todayStr);
+        routine.history.push(dateStr);
     }
     renderRoutines();
     renderCalendar();
